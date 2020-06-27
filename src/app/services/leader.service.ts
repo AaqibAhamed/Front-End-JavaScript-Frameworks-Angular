@@ -9,12 +9,19 @@ export class LeaderService {
 
   constructor() { }
 
-  getLeaders():Leader[]
+  getLeaders(): Leader[]
   {
     return LEADERS;
   }
 
-  getFeaturedLeader(): Leader {
+  getDish(id: string): Leader
+  {
+    return LEADERS.filter((lead)=>(lead.id === id ))[0];
+  }
+
+
+  getFeaturedLeader(): Leader 
+  {
     return LEADERS.filter((lead)=>lead.featured)[0];
   }
 
