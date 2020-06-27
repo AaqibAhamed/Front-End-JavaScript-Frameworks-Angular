@@ -19,8 +19,10 @@ import { ContactComponent } from './contact/contact.component';
 import 'hammerjs';
 
 import {DishService} from './services/dish.service';
+import {PromotionService} from './services/promotion.service';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
+
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
     HomeComponent,
     AboutComponent,
     ContactComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,8 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
     MatButtonModule
   ],
   providers: [
-    DishService
+    DishService,
+    PromotionService
   ],
   bootstrap: [AppComponent]
 })
