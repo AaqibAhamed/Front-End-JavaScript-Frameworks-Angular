@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { Dish } from '../shared/dish';
 import { Params, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
@@ -6,7 +6,7 @@ import { DishService } from '../services/dish.service';
 import { switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Comment } from '../shared/comment';
-import {MatSlider} from '@angular/material';
+
 
 @Component({
   selector: 'app-dishdetail',
@@ -26,35 +26,31 @@ export class DishdetailComponent implements OnInit {
   formErrors = {
     'author': '',
     'comment': ''
-
   };
 
-  slider(value: number)
-  {
-    if(value>=1)
-    {
-      return Math.round(value/1);
+  slider(value: number) {
+    if (value >= 1) {
+      return Math.round(value / 1);
     }
     return value;
   }
 
   validationMessages = {
-    'author':
-    {
+    'author': {
       'required': 'Author Name is required',
       'minlength': 'Author Name must be at least 2 characters long.'
     },
 
-    'comment':
-    {
+    'comment': {
       'required': 'Comment is required'
     }
-
   };
 
-  constructor(private dishService: DishService, private route: ActivatedRoute, private location: Location, private fb: FormBuilder) {
-    this.createForm();
-  }
+  constructor(private dishService: DishService,
+    private route: ActivatedRoute,
+    private location: Location,
+    private fb: FormBuilder,
+    @Inject('BaseURL') private BaseURL) { }
 
   createForm(): void {
     this.commentForm = this.fb.group({
@@ -105,6 +101,8 @@ export class DishdetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.createForm();
+
     this.dishService.getDishIds()
       .subscribe((dishIds) => this.dishIds = dishIds);
     this.route.params
