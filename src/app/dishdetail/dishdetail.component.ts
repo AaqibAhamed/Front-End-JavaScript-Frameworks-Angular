@@ -16,6 +16,7 @@ import { Comment } from '../shared/comment';
 export class DishdetailComponent implements OnInit {
 
   dish: Dish;
+  errMess: string;
   dishIds: string[];
   prev: string;
   next: string;
@@ -51,6 +52,17 @@ export class DishdetailComponent implements OnInit {
     private location: Location,
     private fb: FormBuilder,
     @Inject('BaseURL') private BaseURL) { }
+
+    ngOnInit() {
+      this.createForm();
+  
+      this.dishService.getDishIds()
+        .subscribe((dishIds) => this.dishIds = dishIds);
+      this.route.params
+        .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
+        .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); },
+        errmess => this.errMess = <any> errmess);
+    }
 
   createForm(): void {
     this.commentForm = this.fb.group({
@@ -100,17 +112,7 @@ export class DishdetailComponent implements OnInit {
     this.commentFormDirective.resetForm();
   }
 
-  ngOnInit() {
-    this.createForm();
-
-    this.dishService.getDishIds()
-      .subscribe((dishIds) => this.dishIds = dishIds);
-    this.route.params
-      .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); });
-  }
-
-
+  
   setPrevNext(dishId: string) {
     const index = this.dishIds.indexOf(dishId);
     this.prev = this.dishIds[(this.dishIds.length + index - 1) % this.dishIds.length];
