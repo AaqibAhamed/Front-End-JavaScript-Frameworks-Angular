@@ -89,4 +89,27 @@
       [disabled]="feedbackForm.invalid">Submit</button>
     </form>
   </div>
+  <div [hidden]="isLoading || errFeedbackMess || !showSubmission"> 
+    <h2>Submitting From</h2>
+    <mat-spinner>
+    </mat-spinner>
+    </div>
+    <div fxFlex *ngIf="errFeedbackMess">
+    <h2>Error</h2>
+    <h4>{{errFeedbackMess}}</h4>
+    </div>
+    <div fxFlex *ngIf="feedback" [hidden]="errFeedbackMess || showSubmission" [@expand]>
+      <h3>Your Submission</h3>
+      <mat-list>
+      <mat-list-item fxFlex>
+        <p matline>FirstName:{{feedback.firstname}}</p>
+        <p matline>Lastname:{{feedback.lastname}}</p>
+        <p matline>Telnum:{{feedback.telnum}}</p>
+        <p matline>Email:{{feedback.email}}</p>
+        <p matline>Contact You?:{{feedback.agree}}</p>
+        <p matline>ContactType:{{feedback.contacttype}}</p>
+        <p matline>Message:{{feedback.message}}</p>
+      </mat-list-item>
+    </mat-list>
+    </div>
 </div>

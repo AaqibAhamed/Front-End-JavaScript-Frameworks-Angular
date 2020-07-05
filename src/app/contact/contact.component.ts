@@ -1,7 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { flyInOut, visibility, expand } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+import { ActivatedRoute, Params } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact',
@@ -11,16 +14,24 @@ import { flyInOut } from '../animations/app.animation';
     '[@flyInOut]': 'true',
     'style': 'display: block;'
   },
-  animations:[
-    flyInOut()
+  animations: [
+    flyInOut(),
+    visibility(),
+    expand()
   ]
 })
+
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
   feedback: Feedback;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
+  feedbackCopy: Feedback;
+  errFeedbackMess: string;
+  visibility = 'shown';
+  showSubmission: boolean;
+  isLoading: boolean;
 
   formErrors = {
     'firstname': '',
@@ -55,11 +66,23 @@ export class ContactComponent implements OnInit {
 
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+    private feedbackService: FeedbackService,
+    private route: ActivatedRoute,
+    @Inject('BaseURL') private BaseURL) {
     this.createForm();
+    this.showSubmission = false;
+    this.isLoading = false;
   }
 
   ngOnInit() {
+
+
+    this.route.params
+      .pipe(switchMap((params: Params) => { this.visibility = 'hidden'; return this.feedbackService.submitFeedback(params['feedback']); }))
+      .subscribe(feedback => { this.feedback = feedback; this.feedbackCopy = feedback; this.visibility = 'shown'; },
+        errmess => this.errFeedbackMess = <any>errmess);
+
   }
 
   createForm(): void {
@@ -77,7 +100,7 @@ export class ContactComponent implements OnInit {
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged(); //reser form validation error messages
-    
+
   }
 
   onValueChanged(data?: any) {
@@ -102,8 +125,23 @@ export class ContactComponent implements OnInit {
 
 
   onSubmit() {
+    this.isLoading = true;
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
+    this.feedbackService.submitFeedback(this.feedback)
+      .subscribe(feedback => {
+        this.feedback = feedback;
+        console.log('this Feedback', this.feedback);
+        // this.feedbackCopy =feedback;
+        this.isLoading = false;
+        this.showSubmission = true;
+        setTimeout(() => {
+          this.showSubmission = false;
+          this.isLoading = false;
+        }, 5000)
+      },
+        errmess => { this.feedback = null; this.feedbackCopy = null, this.errFeedbackMess = <any>errmess; })
+    this.feedbackFormDirective.resetForm();
+    
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
@@ -113,7 +151,7 @@ export class ContactComponent implements OnInit {
       contacttype: 'None',
       message: ''
     });
-    this.feedbackFormDirective.resetForm();
+
   }
 
 }

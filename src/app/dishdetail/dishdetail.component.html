@@ -58,9 +58,7 @@
           <input matInput formControlName="author" placeholder="Name" type="text" required>
           <mat-error *ngIf="formErrors.author">{{formErrors.author}} </mat-error>
         </mat-form-field>
-        <mat-slider min="1" max="5" step="1" value="5" thumbLabel tickInterval="1" [displayWith]="slider"
-          formControlName="rating">
-        </mat-slider>
+      <!--   <mat-slider  min="1" max="5" step="1" value="5" thumbLabel tickInterval="1" formControlName="rating" [displayWith]="formatLabel"> </mat-slider> -->
         <mat-form-field class="full-width">
           <textarea matInput formControlName="comment" placeholder="Your Comment" rows="12" required></textarea>
           <mat-error *ngIf="formErrors.comment"> {{ formErrors.comment }}</mat-error>

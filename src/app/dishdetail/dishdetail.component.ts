@@ -43,7 +43,7 @@ export class DishdetailComponent implements OnInit {
     'comment': ''
   };
 
-  slider(value: number) {
+  formatLabel(value: number) {
     if (value >= 1) {
       return Math.round(value / 1);
     }
