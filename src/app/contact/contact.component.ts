@@ -16,7 +16,6 @@ import { switchMap } from 'rxjs/operators';
   },
   animations: [
     flyInOut(),
-    visibility(),
     expand()
   ]
 })
